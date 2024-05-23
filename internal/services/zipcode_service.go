@@ -14,12 +14,7 @@ type Location struct {
 }
 
 func FetchLocation(zipcode string) (*Location, error) {
-	cfg, err := configs.LoadConfig(".")
-	if err != nil {
-		return nil, err
-	}
-
-	url := fmt.Sprintf(cfg.CepAPIURL, zipcode)
+	url := fmt.Sprintf(configs.Cfg.CepAPIURL, zipcode)
 	resp, err := http.Get(url)
 	if err != nil || resp.StatusCode != 200 {
 		return nil, errors.New("invalid response from viacep")

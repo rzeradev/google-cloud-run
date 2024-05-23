@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"fmt"
 	"os"
 	"path"
 
@@ -13,6 +14,8 @@ type Config struct {
 	WeatherAPIURL string `mapstructure:"WEATHER_API_URL"`
 	ServerPort    string `mapstructure:"SERVER_PORT"`
 }
+
+var Cfg *Config
 
 func defaultAndBindings() error {
 	defaultConfigs := map[string]string{
@@ -32,23 +35,38 @@ func defaultAndBindings() error {
 
 }
 func LoadConfig(workdir string) (*Config, error) {
-	var cfg *Config
 	viper.SetConfigName("app_config")
-	_, err := os.Stat(path.Join(workdir, ".env"))
-	if err == nil {
+
+	envFilePath := path.Join(workdir, ".env")
+	if _, err := os.Stat(envFilePath); err == nil {
 		viper.SetConfigType("env")
 		viper.AddConfigPath(workdir)
-		viper.SetConfigFile(".env")
+		viper.SetConfigFile(envFilePath)
+
 		err = viper.ReadInConfig()
 		if err != nil {
-			panic(err)
+			return nil, fmt.Errorf("error reading .env file: %w", err)
 		}
+
+		// fmt.Println("Reading .env file")
+		// fmt.Println(workdir)
+	} else if os.IsNotExist(err) {
+		fmt.Println(".env file does not exist, skipping")
+	} else {
+		return nil, fmt.Errorf("error checking .env file: %w", err)
 	}
+
 	viper.AutomaticEnv()
-	err = defaultAndBindings()
-	err = viper.Unmarshal(&cfg)
+
+	err := defaultAndBindings()
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("error in defaultAndBindings: %w", err)
 	}
-	return cfg, err
+
+	err = viper.Unmarshal(&Cfg)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshalling config: %w", err)
+	}
+
+	return Cfg, nil
 }

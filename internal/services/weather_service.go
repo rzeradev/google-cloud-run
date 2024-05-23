@@ -12,12 +12,7 @@ import (
 )
 
 func FetchWeather(city string) (*models.Weather, error) {
-	cfg, err := configs.LoadConfig(".")
-	if err != nil {
-		return nil, err
-	}
-
-	url := fmt.Sprintf(cfg.WeatherAPIURL, cfg.WeatherAPIKey, city)
+	url := fmt.Sprintf(configs.Cfg.WeatherAPIURL, configs.Cfg.WeatherAPIKey, city)
 
 	resp, err := http.Get(url)
 	if err != nil || resp.StatusCode != 200 {

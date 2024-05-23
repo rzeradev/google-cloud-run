@@ -34,6 +34,12 @@ Este projeto implementa um serviço que recebe um CEP (Código de Endereçamento
 
 4. **O servidor vai rodar no endereço `http://localhost:8080`**
 
+5. **Rodando os tests**
+
+   ```sh
+   docker compose exec app go test -v ./test
+   ```
+
 ## Endpoints da API
 
 - **GET /weather/:zipcode**

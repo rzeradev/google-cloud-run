@@ -10,7 +10,38 @@ import (
 )
 
 type Location struct {
-	City string `json:"localidade"`
+	City  string `json:"localidade"`
+	State string `json:"uf"`
+}
+
+var brazilStates = map[string]string{
+	"AC": "Acre",
+	"AL": "Alagoas",
+	"AP": "Amapá",
+	"AM": "Amazonas",
+	"BA": "Bahia",
+	"CE": "Ceará",
+	"DF": "Distrito Federal",
+	"ES": "Espírito Santo",
+	"GO": "Goiás",
+	"MA": "Maranhão",
+	"MT": "Mato Grosso",
+	"MS": "Mato Grosso do Sul",
+	"MG": "Minas Gerais",
+	"PA": "Pará",
+	"PB": "Paraíba",
+	"PR": "Paraná",
+	"PE": "Pernambuco",
+	"PI": "Piauí",
+	"RJ": "Rio de Janeiro",
+	"RN": "Rio Grande do Norte",
+	"RS": "Rio Grande do Sul",
+	"RO": "Rondônia",
+	"RR": "Roraima",
+	"SC": "Santa Catarina",
+	"SP": "São Paulo",
+	"SE": "Sergipe",
+	"TO": "Tocantins",
 }
 
 func FetchLocation(zipcode string) (*Location, error) {
@@ -28,6 +59,11 @@ func FetchLocation(zipcode string) (*Location, error) {
 
 	if location.City == "" {
 		return nil, errors.New("city not found for the given zipcode")
+	}
+
+	// Check if location.State matches a key in brazilStates and swap the value
+	if fullStateName, exists := brazilStates[location.State]; exists {
+		location.State = fullStateName
 	}
 
 	return &location, nil

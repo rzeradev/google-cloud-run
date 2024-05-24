@@ -5,16 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/rzeradev/google-cloud-run/configs"
 	"github.com/rzeradev/google-cloud-run/internal/models"
 	"github.com/rzeradev/google-cloud-run/pkg/utils"
 )
 
-func FetchWeather(city string) (*models.Weather, error) {
-	url := fmt.Sprintf(configs.Cfg.WeatherAPIURL, configs.Cfg.WeatherAPIKey, city)
-
-	resp, err := http.Get(url)
+func FetchWeather(city string, state string) (*models.Weather, error) {
+	queryString := "country:Brazil,region:%s,name:%s"
+	queryString = fmt.Sprintf(queryString, state, city)
+	queryString = url.QueryEscape(queryString)
+	Url := fmt.Sprintf(configs.Cfg.WeatherAPIURL, configs.Cfg.WeatherAPIKey, queryString)
+	resp, err := http.Get(Url)
 	if err != nil || resp.StatusCode != 200 {
 		return nil, errors.New("invalid response from weatherapi")
 	}

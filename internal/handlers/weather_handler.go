@@ -21,7 +21,7 @@ func GetWeather(c *fiber.Ctx) error {
 		})
 	}
 
-	weather, err := services.FetchWeather(location.City)
+	weather, err := services.FetchWeather(location.City, location.State)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "failed to fetch weather data",
